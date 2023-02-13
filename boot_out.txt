@@ -1,0 +1,2 @@
+Adafruit CircuitPython 7.3.3 on 2022-08-29; ESP32-S3-DevKitC-1-N8 with ESP32S3
+Board ID:espressif_esp32s3_devkitc_1_n8
