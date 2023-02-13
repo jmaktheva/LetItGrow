@@ -4,6 +4,7 @@ import displayio
 import busio
 from adafruit_display_text import label
 import adafruit_ili9341
+import adafruit_imageload
 
 def startup():
     #returns:   display - store this in variable of same name, pass into new functions
@@ -58,5 +59,22 @@ def draw_text(splash, text, scale, x, y, color_hex):
     text_area = label.Label(terminalio.FONT, text=text, color=color_hex)
     text_group.append(text_area)  # Subgroup for text scaling
     splash.append(text_group)
+    
+    return splash
+
+#TODO: load other file types? memory error
+def draw_image(splash, filepath, width, height, x, y):
+    #parameters:    splash - pass in splash object from other functions
+    #               filepath - string for path to file. ex: '/purple.bmp'
+    #               width - width of picture
+    #               height - height of picture
+    #               x - x coordinate of picture to be displayed, from 0 to 320
+    #               y - y coordinate of picture to be displayed, from 0 to 240
+    #returns:       splash - store this in variable of same name, pass into new functions
+    bitmap, palette = adafruit_imageload.load(filepath, bitmap=displayio.Bitmap, palette=displayio.Palette)
+    bmp = displayio.TileGrid(bitmap, pixel_shader=palette, width=1, height=1, tile_width=width, tile_height=height, default_tile=0)
+    splash.append(bmp)
+    bmp.x = x
+    bmp.y = y
     
     return splash
