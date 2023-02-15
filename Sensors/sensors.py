@@ -21,6 +21,7 @@ def plantheight():
         print("Error Measuring Plant Height")
         return -1
 
+#function to check water level of tank
 def waterlevel():
     try:
         #Measure distance and convert to inches
