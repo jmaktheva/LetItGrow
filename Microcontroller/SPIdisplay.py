@@ -6,6 +6,8 @@ from adafruit_display_text import label
 import adafruit_ili9341
 import adafruit_imageload
 
+#TODO: display.show() deprecated
+
 def startup():
     #returns:   display - store this in variable of same name, pass into new functions
 
@@ -62,19 +64,33 @@ def draw_text(splash, text, scale, x, y, color_hex):
     
     return splash
 
-#TODO: load other file types? memory error
-def draw_image(splash, filepath, width, height, x, y):
+def draw_image(splash, filepath, x, y):
     #parameters:    splash - pass in splash object from other functions
-    #               filepath - string for path to file. ex: '/purple.bmp'
-    #               width - width of picture
-    #               height - height of picture
+    #               filepath - string for path to file, currently bmp or png. ex: '/purple.bmp'. files are particular - ask Logan for help
     #               x - x coordinate of picture to be displayed, from 0 to 320
     #               y - y coordinate of picture to be displayed, from 0 to 240
     #returns:       splash - store this in variable of same name, pass into new functions
-    bitmap, palette = adafruit_imageload.load(filepath, bitmap=displayio.Bitmap, palette=displayio.Palette)
-    bmp = displayio.TileGrid(bitmap, pixel_shader=palette, width=1, height=1, tile_width=width, tile_height=height, default_tile=0)
-    splash.append(bmp)
+    
+    image, palette = adafruit_imageload.load(filepath)
+    palette.make_transparent(0)
+    tile_grid = displayio.TileGrid(image, pixel_shader=palette)
+    tile_grid.x = x
+    tile_grid.y = y
+    splash.append(tile_grid)
+    
+    return splash
+
+def draw_bitmap(splash, filepath, x, y):
+    #parameters:    splash - pass in splash object from other functions
+    #               filepath - string for path to file. ex: '/purple.bmp'. files are particular - ask Logan for help
+    #               x - x coordinate of picture to be displayed, from 0 to 320
+    #               y - y coordinate of picture to be displayed, from 0 to 240
+    #returns:       splash - store this in variable of same name, pass into new functions
+    
+    bitmap = displayio.OnDiskBitmap(filepath)
+    bmp = displayio.TileGrid(bitmap, pixel_shader=bitmap.pixel_shader)
     bmp.x = x
     bmp.y = y
+    splash.append(bmp)
     
     return splash
