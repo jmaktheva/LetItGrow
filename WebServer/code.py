@@ -39,6 +39,7 @@ message = bytearray()
 
 '''
 
+#User Set Wifi Credentials
 ssid = 'TheCrib'
 password = 'daddymitch'
 
