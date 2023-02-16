@@ -10,6 +10,10 @@ Code.py
 Main file where server is run. This is where the ESP32 connects to the Wifi network and binds to the TCP protocol. 
 Parsing of HTML requests and distribution of HTML files done here. 
 
+Index.html
+============
+This is the homepage where you can access all other webpages and functions. 
+
 Health.html
 ==========
 Webpage that contains the code to display sensor readings. The webpage has a javascript script that periodically updates 
