@@ -1,11 +1,16 @@
 import wifi
 import socketpool
-import io
+import io 
 import re
 import errno
 import os
 
-#Global Variables
+'''
+#Global Variables 
+#Below are placeholder variables to store POST request data values so that
+#these values can be added to an HTML request sent to the database. 
+
+'''
 Gled_switch = 0
 Gled_color = "white"
 Gled_brightness = 0
@@ -22,8 +27,18 @@ Gsensor_nitrogen = 0
 Gsensor_potassium = 0
 Gsensor_phosphorous = 0
 
+#Buffers for Parsing Data
+buffer = bytearray(1024)
+message = bytearray()
 
+'''
 #Wifi Connectivity
+#Below is the code to connect to a specified SSID and Password for a Wifi Network
+#Code scans for all local networks and then joins based on the specified SSID. 
+#Prints out IP address once connected. 
+
+'''
+
 ssid = 'TheCrib'
 password = 'daddymitch'
 
@@ -38,6 +53,13 @@ print(wifi.radio.connect(ssid=ssid,password=password))
 print("my IP addr:", wifi.radio.ipv4_address)
 ip = str(wifi.radio.ipv4_address)
 
+'''
+#TCP Connection Setup
+#Below is the code to create a TCP socketpool and listen for 5 connection requests. 
+#Socket is set to blocking and No Timeout so that all connections are required to have data. 
+
+'''
+
 pool = socketpool.SocketPool(wifi.radio)
 socket = pool.socket()
 socket.bind([ip,80])
@@ -45,11 +67,17 @@ socket.listen(5)
 socket.setblocking(True)
 socket.settimeout(None)
 
-
-buffer = bytearray(1024)
-message = bytearray()
+#############
+# MAIN LOOP #
+#############
 
 while True:
+    
+    '''
+    #Check for Connection Requests
+    #Below is code to check for requests and store message into buffer
+    '''
+    
     try:
         conn, addr = socket.accept()
         client = conn.recv_into(buffer)
@@ -71,13 +99,18 @@ while True:
             else:
                 message.append(byte)
 
-    #Read Message
+    #Read Message and Parse Out Header Line
     reader = io.BytesIO(message)
     line = str(reader.readline(), "utf-8")
     (method, full_path, _) = line.rstrip("\r\n").split(None, 2)
     
-    
+    '''
     #Message Parsing
+    #Below is code to parse the header line for GET and POST Requests
+    #POST request will print value and update global variable
+    #Get Request will look for valid file and send back HTML page as response
+    
+    '''
     if method == "POST":
         header = str(reader.getvalue(), "utf-8")
         content = header.split("Content-Type: ")[1].split("\r\n")[0]
@@ -123,18 +156,19 @@ while True:
         
     
         #Send File as Response
-        print(Filename)
+        #print(Filename)
         #Filename = "water.svg"
         myfile = open(Filename, "rb")
         headers = {}
         
+        #Set HTML response Headers
         #headers["Server"] = "Ampule/0.0.1-alpha (CircuitPython)"
         #headers["Connection"] = "close"
         if(".svg" in Filename):
             headers["Content-Type"] = "image/svg+xml"
-        
         headers["Content-Length"] = os.stat(Filename)[6]
 
+        #Build HTML Response Message
         with io.BytesIO() as response:
             response.write(("HTTP/1.1 200 OK\r\n").encode())
             for k, v in headers.items():
@@ -152,7 +186,7 @@ while True:
             response_length = len(response_buffer)
             bytes_sent_total = 0
             
-            
+            #Send HTML Response to Client
             while True:
                 try:
                     bytes_sent = conn.send(response_buffer)
