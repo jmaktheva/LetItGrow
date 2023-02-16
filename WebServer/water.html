@@ -4,6 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     
+    <!-- Configuration for Webpage Decorations and UI -->     
     <style>
     html {
      font-family: Cascadia Code;
@@ -71,7 +72,6 @@
     </style>
     </head>
     
-
     <body>
     
      <div class="header">
@@ -81,6 +81,7 @@
        </a>
     </div>
     
+    <!-- Display Current Water State -->      
     <p>
     <span>Current Water State: water_state </span>
     </p>
@@ -88,16 +89,20 @@
     <img src="water.svg" width="250" height="250" alt="WaterGlass ">
     
     
+    <!-- Function to Turn on Pump and Send HTML request -->      
     <p>
         <button class="button" onclick="sendInputValue()" id="waterbutton";>Water ON</button>
     </p>
     
+   <!-- Function to Display Slider --> 
     <p>Value: <span id="demo"></span></p>
-    
     <div class="slidecontainer">
       <input type="range" min="1" max="100" value="50" id="myRange" class="slider">
     </div>
     
+         
+         
+    <!-- Script to Send HTML values to Server and Update Slider Value -->      
     <script>
     
     function sendInputValue() {
@@ -119,6 +124,7 @@
         xhr.send(slider.value)
        
     }
+        //Slider Output Code
         var slider = document.getElementById("myRange");
         var output = document.getElementById("demo");
         output.innerHTML = slider.value;
