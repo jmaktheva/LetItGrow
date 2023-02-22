@@ -5,9 +5,9 @@ from adafruit_seesaw.seesaw import Seesaw #needed for moisture / temperature rea
 from adafruit_hcsr04 import HCSR04 #importing code for the Ultrasonic Sensor
 
 #####Defining Constants#####
-heightoftank = 3 ##Needs to be updated
-airmoisture = 320 ##Needs to be updated
-watermoisture = 690 ##Needs to be updated
+heightoftank = 9 ##Needs to be updated
+airmoisture = 320
+watermoisture = 690
 
 # Initialize the ultrasonic sensor
 # Trigger is initialised to pin 4 and Echo is initialised to pin 5
