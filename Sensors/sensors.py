@@ -6,8 +6,8 @@ from adafruit_hcsr04 import HCSR04 #importing code for the Ultrasonic Sensor
 
 #####Defining Constants#####
 heightoftank = 3 ##Needs to be updated
-airmoisture = 3 ##Needs to be updated
-watermoisture = 3 ##Needs to be updated
+airmoisture = 320 ##Needs to be updated
+watermoisture = 690 ##Needs to be updated
 
 # Initialize the ultrasonic sensor
 # Trigger is initialised to pin 4 and Echo is initialised to pin 5
