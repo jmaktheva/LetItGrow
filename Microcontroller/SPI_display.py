@@ -7,6 +7,9 @@ import adafruit_ili9341
 import adafruit_imageload
 from adafruit_display_shapes import circle
 import adafruit_focaltouch
+from adafruit_button import Button
+from adafruit_bitmap_font import bitmap_font
+import pwmio
 
 #TODO: display.show() deprecated
 
@@ -21,11 +24,12 @@ splash = displayio.Group() #create group
 display.show(splash) #show display
 i2c = busio.I2C(sda=board.IO4, scl=board.IO5)
 ft = adafruit_focaltouch.Adafruit_FocalTouch(i2c, debug=False)
+pwm = pwmio.PWMOut(board.IO3, duty_cycle=2**16 - 1)
+
+#font = bitmap_font.load_font('/fonts/roboto.bdf')
 
 def draw_background(color_hex):
-    #parameters:    splash - pass in splash object from other functions
-    #               color_hex - hex color code. format '0x######'
-    #returns:       splash - store this in variable of same name, pass into new functions
+    #parameters:    color_hex - hex color code. format '0x######'
     
     color_bitmap = displayio.Bitmap(320, 240, 1)
     color_palette = displayio.Palette(1)
@@ -37,13 +41,11 @@ def draw_background(color_hex):
     return
 
 def draw_text(text, scale, x, y, color_hex):
-    #parameters:    splash - pass in splash object from other functions
-    #               text - string of what you want displayed
+    #parameters:    text - string of what you want displayed
     #               scale - scale of text. try 2 or 3
     #               x - x coordinate of text to be displayed, from 0 to 320
     #               y - y coordinate of text to be displayed, from 0 to 240
     #               color_hex - hex color code. format 0x######
-    #returns:       splash - store this in variable of same name, pass into new functions
     
     text_group = displayio.Group(scale=scale, x=x, y=y)
     text_area = label.Label(terminalio.FONT, text=text, color=color_hex)
@@ -53,11 +55,9 @@ def draw_text(text, scale, x, y, color_hex):
     return
 
 def draw_image(filepath, x, y):
-    #parameters:    splash - pass in splash object from other functions
-    #               filepath - string for path to file, currently bmp or png. ex: '/purple.bmp'. files are particular - ask Logan for help
+    #parameters:    filepath - string for path to file, currently bmp or png. ex: '/purple.bmp'. files are particular - ask Logan for help
     #               x - x coordinate of picture to be displayed, from 0 to 320
     #               y - y coordinate of picture to be displayed, from 0 to 240
-    #returns:       splash - store this in variable of same name, pass into new functions
     
     image, palette = adafruit_imageload.load(filepath)
     palette.make_transparent(0)
@@ -69,11 +69,10 @@ def draw_image(filepath, x, y):
     return
 
 def draw_bitmap(filepath, x, y):
-    #parameters:    splash - pass in splash object from other functions
-    #               filepath - string for path to file. ex: '/purple.bmp'. files are particular - ask Logan for help
+    #parameters:    filepath - string for path to file. ex: '/purple.bmp'. files are particular - ask Logan for help
     #               x - x coordinate of picture to be displayed, from 0 to 320
     #               y - y coordinate of picture to be displayed, from 0 to 240
-    #returns:       splash - store this in variable of same name, pass into new functions
+    # less memory intensive, I think. will have to do some testing
     
     bitmap = displayio.OnDiskBitmap(filepath)
     bmp = displayio.TileGrid(bitmap, pixel_shader=bitmap.pixel_shader)
@@ -84,12 +83,10 @@ def draw_bitmap(filepath, x, y):
     return
 
 def draw_circle(x, y, r, color_hex):
-    #parameters:    splash - pass in splash object from other functions
-    #               x - x coordinate of text to be displayed, from 0 to 320
+    #parameters:    x - x coordinate of text to be displayed, from 0 to 320
     #               y - y coordinate of text to be displayed, from 0 to 240
     #               r - radius of circle
     #               color_hex - hex color code. format 0x######
-    #returns:       splash - store this in variable of same name, pass into new functions
     
     circ = circle.Circle(x0=x, y0=y, r=r, fill=color_hex)
     splash.append(circ)
@@ -101,5 +98,26 @@ def remove_text():
     splash.pop(-1)
 
 def touch_input():
+    #returns:       ft.touches[0] - a dict with the id, and y- and x-coords of the touched point
+    
     if ft.touched: #1 if touched, 0 otherwise
         return ft.touches[0]
+
+def draw_button(x, y, width, height, label):
+    #parameters:    x - x coordinate of button to be displayed, from 0 to 320
+    #               y - x coordinate of button to be displayed, from 0 to 240
+    #               width - width of button to be displayed
+    #               height - height of button to be displayed
+    #               label - text of button to be displayed
+    
+    btn = Button(x=x, y=y, width=width, height=height, label=label, label_font=terminalio.FONT)
+    splash.append(btn)
+    
+    return
+
+def set_brightness(brightness):
+    #parameters:    brightness - the desired brightness of the display, from 0 to 100
+
+    pwm.duty_cycle = int(brightness/100 * (2**16 - 1))
+    
+    return
