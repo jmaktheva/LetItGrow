@@ -248,7 +248,7 @@ def InitializeWifi(ssid,password):
     
     return str(wifi.radio.ipv4_address)
 
-def IntializeSocket(ip):
+def InitializeSocket(ip):
     pool = socketpool.SocketPool(wifi.radio)
     socket = pool.socket()
     socket.bind([ip,80])
@@ -363,6 +363,36 @@ def sendNotification():
 #socket = IntializeSocket(ip)
 
 def webserver(socket):
+
+    global Gsensor_temperature
+    global Gled_switch
+    global Gled_color
+    global Gled_brightness
+    global Gled_schedule
+
+    global Gwater_switch
+    global Gwater_input
+    global Gwater_inputValue
+    global Gwater_tank
+    global Gwater_schedule
+
+    global Gsensor_moisture
+    global Gsensor_temperature
+    global Gsensor_nitrogen
+    global Gsensor_potassium
+    global Gsensor_phosphorous
+    
+    global moisture_upper
+    global moisture_lower
+    global temperature_upper
+    global temperature_lower
+    global nitrogen_upper
+    global nitrogen_lower
+    global potassium_upper
+    global potassium_lower
+    global phosphorous_upper
+    global phosphorous_lower
+
     message = bytearray()
     buffer = bytearray(1024)
     
@@ -419,12 +449,12 @@ def webserver(socket):
                         break
                     else:
                         response_buffer = response_buffer[bytes_sent:]
-                        #continue
-                        return
+                        continue
+                        
                 except OSError as e:
                     if (e.errno == 11):       
-                        #continue
-                        return
+                        continue
+                        
             conn.close()
             
             #continue
@@ -435,7 +465,7 @@ def webserver(socket):
         if content == "led_switch":
             
             Gled_switch = int(value)
-            
+            print('HEY'+str(Gled_switch))
             response_buffer = MessageData("feedback")
             response_length = len(response_buffer)
             
@@ -450,13 +480,13 @@ def webserver(socket):
                         break
                     else:
                         response_buffer = response_buffer[bytes_sent:]
-                        #continue
-                        return
+                        continue
+                        
                 
                 except OSError as e:
                     if (e.errno == 11):       
-                        #continue
-                        return
+                        continue
+                        
             print("Sent Back HTTP200 LED STATE")
             conn.close()
             
@@ -478,13 +508,13 @@ def webserver(socket):
                         break
                     else:
                         response_buffer = response_buffer[bytes_sent:]
-                        #continue
-                        return
+                        continue
+                        
                 
                 except OSError as e:
                     if (e.errno == 11):       
-                        #continue
-                        return
+                        continue
+                        
                     
             print("Sent Back HTTP200 LED COLOR")
             conn.close()
@@ -505,13 +535,13 @@ def webserver(socket):
                         break
                     else:
                         response_buffer = response_buffer[bytes_sent:]
-                        #continue
-                        return
+                        continue
+                        
                 
                 except OSError as e:
                     if (e.errno == 11):       
-                        #continue
-                        return
+                        continue
+                        
                     
             print("Sent Back HTTP200 LED BRIGHTNESS")
             conn.close()
@@ -536,13 +566,13 @@ def webserver(socket):
                         break
                     else:
                         response_buffer = response_buffer[bytes_sent:]
-                        #continue
-                        return
+                        continue
+                        
                 
                 except OSError as e:
                     if (e.errno == 11):       
-                        #continue
-                        return
+                        continue
+                        
                     
             print("Sent Back HTTP200 Water Input")
             conn.close()
@@ -587,17 +617,18 @@ def webserver(socket):
                     break
                 else:
                     response_buffer = response_buffer[bytes_sent:]
-                    #continue
-                    return
+                    continue
+                    
             
             except OSError as e:
                 if (e.errno == 11):       
-                    #continue
-                    return
+                    continue
+                    
                     
         
         conn.close()
         print("END OF CONNECTION")
+        return
 
 
 
