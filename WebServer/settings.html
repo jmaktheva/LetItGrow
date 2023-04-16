@@ -1,0 +1,184 @@
+<!DOCTYPE HTML><html>
+    <head>
+    <title>Let It Grow App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    
+    <style>
+    html {
+     font-family: Cascadia Code;
+     display: inline-block;
+     margin: 0px auto;
+     text-align: center;
+    }
+    h1 { font-size: 3.0rem;}
+    p { font-size: 3.0rem; }
+    .units { font-size: 1.5rem; }
+    .sensor-labels{
+      font-size: 1.5rem;
+      vertical-align:middle;
+      padding-bottom: 15px;
+    }
+    .header {
+        padding: 20px;
+        text-align: center;
+        background: #1abc9c;
+        color: white;
+        font-size: 30px;
+        }
+    .button {
+        display: inline-block; background-color: #e7bd3b; border: none; 
+        border-radius: 4px; color: white; padding: 16px 40px; text-decoration: none;
+        font-size: 30px; margin: 2px; cursor: pointer;
+    }
+    .button2 {
+        background-color: #4286f4;
+    }
+    
+        input[type=text] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+
+        }
+
+        .form-inline input {
+        vertical-align: middle;
+        margin: 5px 10px 5px 0;
+        padding: 10px;
+        background-color: #fff;
+        box-sizing: border-box;
+        border: 2px solid red;
+        border-radius: 4px;
+        }
+    
+     a { //No Color Link
+      color: #FFFFFF;
+      text-decoration: inherit;
+    }
+    
+    /* Style the submit button */
+    .form-inline button {
+    padding: 25px 75px;
+    background-color: dodgerblue;
+    border: 1px solid #ddd;
+    color: white;
+    }
+    
+    .form-inline button:hover {
+      background-color: royalblue;
+    }
+    
+    </style>
+    </head>
+
+<body>
+    
+    <div class="header">
+       <h1>Let It Grow</h1>
+       <a href="index.html">
+          Home
+       </a>
+    </div>
+
+<br>
+   <img src="gear.svg" width="100" height="100" alt="gear">
+</br>
+
+<h2>Settings</h2>
+
+<form class="form-inline" action ="/settings.html" method="post"> 
+  <input type="hidden" id="settingsID" name="settingsID" value="settingsID">
+  <br>
+  <br> Moisture </br>
+  Current 1: <span id="/moisture_upper"></span>
+  Current 2: <span id="/moisture_lower"></span>
+  <br></br>
+  <input type="number" id="moisture_upper" placeholder="Upper Range" name="moisture_upper">
+  <input type="number" id="moisture_lower" placeholder="Lower Range" name="moisture_lower">
+  </br> 
+  
+  <br>
+   <br> Temperature </br>
+   Current 1: <span id="/temperature_upper"></span>
+   Current 2: <span id="/temperature_lower"></span>
+  <br></br>
+  <input type="number" id="temperature_upper" placeholder="Upper Range" name="temperature_upper">
+  <input type="number" id="temperature_lower" placeholder="Lower Range" name="temperature_lower">
+  </br> 
+  
+  <br>
+  <br> NPK </br>
+  Current 1: <span id="/npk_upper"></span>
+  Current 2: <span id="/npk_lower"></span>
+  <br></br>
+  <input type="number" id="npk_upper" placeholder="Upper Range" name="npk_upper">
+  <input type="number" id="npk_lower" placeholder="Lower Range" name="npk_lower">
+  </br> 
+  
+  <br>
+  
+  <br> Air Quality </br>
+  Current 1: <span id="/airquality_upper"></span>
+  Current 2: <span id="/airqualiy_lower"></span>
+  <br></br>
+  
+  <input type="number" id="airquality_upper" placeholder="Upper Range" name="airquality_upper">
+  <input type="number" id="airquality_lower" placeholder="Lower Range" name="airquality_lower">
+  </br> 
+  <br>
+  <br> Light Levels </br>
+  Current 1: <span id="/light_upper"></span>
+  Current 2: <span id="/light_lower"></span>
+  <br></br>
+  <input type="number" id="light_upper" placeholder="Upper Range" name="light_upper">
+  <input type="number" id="light_lower" placeholder="Lower Range" name="light_lower">
+  </br> 
+  <br>
+  </br>
+  <button type="submit">Submit</button>
+</form>
+
+
+<script>
+
+function getInputValue(string)
+    {
+        var request = new XMLHttpRequest();
+        var value;
+        
+        request.open("GET", string);
+        request.setRequestHeader("Content-Type", string)
+        request.send(null);
+        
+        
+        request.onreadystatechange = function () {
+            if (request.readyState === 4 && request.status === 200) {
+                 
+                 var value = request.responseText
+                 output = document.getElementById(string);
+                 output.innerHTML = value;
+                                 
+            }
+          }
+        
+    }
+
+    getInputValue("/moisture_upper");
+    getInputValue("/moisture_lower");
+    getInputValue("/temperature_upper");
+    getInputValue("/temperature_lower");
+    getInputValue("/npk_upper");
+    getInputValue("/npk_lower");
+    getInputValue("/airquality_upper");
+    getInputValue("/airquality_lower");
+    getInputValue("/light_upper");
+    getInputValue("/light_lower");
+
+</script>
+
+
+</body>
+</html>
+
+

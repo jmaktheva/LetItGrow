@@ -1,0 +1,176 @@
+<!DOCTYPE HTML><html>
+    <head>
+    <title>LIGHT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <style>
+    html {
+     font-family: Cascadia Code;
+     display: inline-block;
+     margin: 0px auto;
+     text-align: center;
+    }
+    h1 { font-size: 3.0rem; }
+    p { font-size: 3.0rem; }
+    
+    a {//No Color Link
+      color: #FFFFFF;
+      text-decoration: inherit;
+    }
+    
+    .header {
+        padding: 20px;
+        text-align: center;
+        background: #1abc9c;
+        color: white;
+        font-size: 30px;
+        }
+    .units { font-size: 1.5rem; }
+    .sensor-labels{
+      font-size: 1.5rem;
+      vertical-align:middle;
+      padding-bottom: 15px;
+    }
+    .button {
+        font-family: Impact;
+        display: inline-block; background-color: #f0ead6; border: none; 
+        border-radius: 20px; color: white; padding: 50px 100px; text-decoration: none;
+        font-size: 50px; margin: 2px; cursor: pointer;
+    }
+    .button2 {
+        background-color: #ddd6f0;
+    }
+    
+    .button3{
+        background-color: #d6e9f0;
+    }
+    
+    </style>
+    </head>
+    <body>
+    
+     <div class="header">
+       <h1>Let It Grow</h1>
+       <a href="light.html">
+          Back
+       </a>
+    </div>
+    
+    <p id =lightstat>Loading...</p>
+      
+    <p>
+    <button class="button" onclick="Change1()"> White </button></a>
+    </p>
+
+    <p>
+    <button  class="button button2" onclick="Change2()" > Purple </button></a>
+    </p>
+    
+    <p>
+    <button  class="button button3" onclick="Change3()" > Mix </button></a>
+    </p>
+    
+      <script>
+      
+      let state = 0;
+      
+    function Change1(){    
+        state = 0;
+        sendInputValue();
+        document.getElementById("lightstat").innerHTML = "Current Color: White"
+        
+    }
+    
+    function Change2(){
+    
+        state = 1; 
+        sendInputValue();
+        document.getElementById("lightstat").innerHTML = "Current Color: Purple"
+        
+    }
+    
+    function Change3(){
+    
+        state = 2; 
+        sendInputValue();
+        document.getElementById("lightstat").innerHTML = "Current Color: Mix"
+        
+    }
+    
+    
+    function getInputValue(string)
+    {
+        var request = new XMLHttpRequest();
+        var value;
+        
+        request.open("GET", string);
+        request.setRequestHeader("Content-Type", string)
+        request.send(null);
+        
+        
+        request.onreadystatechange = function () {
+            if (request.readyState === 4 && request.status === 200) {
+                 
+                 var value = request.responseText
+                     
+                 output = document.getElementById(string);
+                 
+                 if(Number(value) == 1){
+               
+                     document.getElementById("lightstat").innerHTML = "Current Color: Purple"
+                 }
+                 else if(Number(value) == 0){
+               
+                     document.getElementById("lightstat").innerHTML = "Current Color: White"
+                 }
+                 else if(Number(value) == 2){
+                     document.getElementById("lightstat").innerHTML = "Current Color: Mix"
+                 
+                 }
+                
+            }
+          }
+        
+    }
+    
+    function sendInputValue() {
+        
+        // create XMLHttpRequest object
+        const request = new XMLHttpRequest()
+        
+        // open a POST request
+        request.open("POST", "data")
+        
+        // set content-type header to JSON
+        request.setRequestHeader("Content-Type", "led_color")
+        
+        // send JSON data to the remote server
+        request.send(state)
+        
+        //Server Sends Back Feedback 
+        request.onreadystatechange = function () {
+  
+            if (request.readyState === 4 && request.status === 200) {
+                 
+                 alert("LED REQUEST SENT");
+                 getInputValue("/led_color");
+                
+            }
+          }
+            
+       
+    }
+    
+    //Main//
+    getInputValue("/led_color");
+    
+    
+    </script>
+    
+
+    
+    </body>
+    </html>
+
+
+
