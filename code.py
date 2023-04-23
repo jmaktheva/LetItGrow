@@ -1,206 +1,259 @@
-#code not for demo:
-
-#spid.draw_text('Harsh, Jackson,', 2, 70, 70, 0xD80621)
-#spid.draw_text('Logan, Marcus,', 2, 70, 90, 0xD80621)
-#spid.draw_image('/water_resized.png', 40, 180)
-#spid.draw_image('/light_resized.png', 120, 180)
-#spid.draw_image('/health_resized.png', 200, 180)
-
-#water = 25
-#spid.overwrite_text(str(water), 2, 179, 60, 0xFF0000, index_water)
-#nitro, phos, potass = 6, 2, 2
-#spid.overwrite_text(str(nitro)+':'+str(phos)+':'+str(potass), 2, 95, 80, 0xFF0000, index_npk)
-#ss_temp = 76
-#spid.overwrite_text(str(ss_temp), 2, 110, 100, 0xFF0000, index_temp)
-#soil_moist = 25
-#spid.overwrite_text(str(soil_moist), 2, 215, 120, 0xFF0000, index_soil_moist)
 '''
-lts.cycle_power()
-print('cycle power')
-time.sleep(3)
-
-lts.cycle_power()
-print('cycle power')
-time.sleep(3)
-
-lts.cycle_color()
-print('cycle color')
-time.sleep(3)
-
-lts.cycle_color()
-print('cycle color')
-time.sleep(3)
-
-lts.cycle_color()
-print('cycle color')
-time.sleep(3)
-
-lts.cycle_brightness()
-print('cycle brightness 1')
-time.sleep(3)
-lts.cycle_brightness()
-print('cycle brightness 2')
-time.sleep(3)
-lts.cycle_brightness()
-print('cycle brightness 3')
-time.sleep(3)
-lts.cycle_brightness()
-print('cycle brightness 4')
-time.sleep(3)
-lts.cycle_brightness()
-print('cycle brightness 5')
-time.sleep(3)
-lts.cycle_brightness()
-print('cycle brightness 6')
-time.sleep(3)
-lts.cycle_brightness()
-print('cycle brightness 7')
-time.sleep(3)
-lts.cycle_brightness()
-print('cycle brightness 8')
-time.sleep(3)
-lts.cycle_brightness()
-print('cycle brightness 9')
-time.sleep(3)
-'''
-
-
-
-import SPI_display as spid
-import time
-import board
-import digitalio
-import lights as lts
-#import soil_sensor as ss
-#import server as sv
-#import Ultrasonic as us
-
-'''
-gate = digitalio.DigitalInOut(board.IO8)
-gate.direction = digitalio.Direction.OUTPUT
-gate.value = False
-'''
-'''
-water_flow = 0
-
-while water_flow<5:
-    gate.value = True
-    time.sleep(3)
-    gate.value=False
-    time.sleep(1.5)
-    water_flow += 1
-
-'''
-spid.draw_background(0x00FF00)
-spid.draw_text('Let It Grow', 3, 30, 20, 0xD80621)
-
-water = 69
-spid.draw_text('Tank level:   ' + '%', 2, 35, 60, 0xFF0000)
-index_water = spid.draw_text(str(water), 2, 179, 60, 0xFF0000)
-
-nitro, phos, potass = 4, 2, 1
-spid.draw_text('NPK: ', 2, 35, 80, 0xFF0000)
-index_npk = spid.draw_text(str(nitro)+':'+str(phos)+':'+str(potass), 2, 95, 80, 0xFF0000)
-
-ss_temp = 74
-spid.draw_text('Temp:   ' + ' ' + 'F', 2, 35, 100, 0xFF0000)
-index_temp = spid.draw_text(str(ss_temp), 2, 110, 100, 0xFF0000)
-
-soil_moist = 42
-spid.draw_text('Soil moisture:   '+'%', 2, 35, 120, 0xFF0000)
-index_soil_moist = spid.draw_text(str(soil_moist), 2, 215, 120, 0xFF0000)
-
 plant_height = 4
+
 
 if water<20:
     spid.draw_circle(15, 145, 8, 0xFF0000)
     spid.draw_text('Tank water too low!', 2, 35, 145, 0xFF0000)
-if nitro<3.2 or nitro>4.8 or phos<1.6 or phos>2.4 or potass<0.8 or potass>1.2:
+if NPK != 'okay':
     spid.draw_circle(15, 165, 8, 0xFF0000)
     spid.draw_text('NPK out of spec!', 2, 35, 165, 0xFF0000)
-if ss_temp>86 or ss_temp<59:
+if ssTemp>86 or ssTemp<59:
     spid.draw_circle(15, 185, 8, 0xFF0000)
     spid.draw_text('Ambient temp too high!', 2, 35, 185, 0xFF0000)
 if plant_height<3:
     spid.draw_circle(15, 205, 8, 0xFF0000)
     spid.draw_text('Raise lights!', 2, 35, 205, 0xFF0000)
-if soil_moist<20:
+if soilMoist<20:
     spid.draw_circle(15, 225, 8, 0xFF0000)
     spid.draw_text('Plant may need watered!', 2, 35, 225, 0xFF0000)
 
+'''
 
-#18 13
-import busio
-import binascii
-uart = busio.UART(tx=board.IO18, rx=board.IO13, baudrate=9600, timeout=3)
-testList = [0x01, 0x03, 0x00, 0x1e, 0x00, 0x01, 0xB5, 0xCC]
-bigB = bytearray(testList)
-print(type(bigB))
-print(bigB)
+
+import gc
+import time
+import board
+import digitalio
+import server as sv
+import SPI_display as spid
+import i2cSensors as i2cs
+import pumps
+import lights as lts
+import ultrasonic as us
+import npk
+
+lts.power_on()
+
+spid.draw_background(0x00FF00)
+spid.draw_text('Let It Grow', 3, 30, 20, 0xD80621)
+
+waterLevel = 0
+spid.draw_text('Tank level:   ' + '%', 2, 35, 60, 0xFF0000)
+index_water = spid.draw_text(str(waterLevel), 2, 179, 60, 0xFF0000)
+
+NPK = 0
+spid.draw_text('NPK: ', 2, 35, 80, 0xFF0000)
+index_NPK = spid.draw_text(str(NPK), 2, 95, 80, 0xFF0000)
+
+ssTemp = 0
+spid.draw_text('Temp:   ' + ' ' + 'F', 2, 35, 100, 0xFF0000)
+index_temp = spid.draw_text(str(ssTemp), 2, 110, 100, 0xFF0000)
+
+soilMoist = 0
+spid.draw_text('Soil moisture:   '+'%', 2, 35, 120, 0xFF0000)
+index_soilMoist = spid.draw_text(str(soilMoist), 2, 215, 120, 0xFF0000)
+
+ambLight = 0
+spid.draw_text('Ambient light:   '+'%', 2, 35, 140, 0xFF0000)
+index_ambLight = spid.draw_text(str(ambLight), 2, 215, 140, 0xFF0000)
+
+
+
+ip = '172.20.10.6'
+ssid = 'TheBeast'
+password = 'lolsquare'
+sv.InitializeWifi(ssid, password)
+#socket = sv.InitializeClientSocket(ip)
+#print(gc.mem_free)
+#before loop, ask server for values of variables
+
+variable_dict = {'led_switch': 0, 'led_color': 0, 'led_brightness': 0, 'water_tank': 0,
+                 'sensor_moisture': 0, 'sensor_temperature': 0, 'sensor_airquality': 0,
+                 'sensor_light': 0, 'change': 0, 'led_schedule': 0, 'water_schedule': 0, 'moisture_upper': 1000000,
+                 'moisture_lower': -1000000, 'temperature_upper': 1000000, 'temperature_lower': -1000000, 'npk_upper': 1000000,
+                 'npk_lower': -1000000, 'airquality_upper': 1000000,
+                 'airquality_lower': -1000000, 'light_upper': 1000000, 'light_lower': -1000000, 'water_switch': 0, 'water_input': 0}
+#water input: how much water to water
+#water switch: pump or no
+postVarList1 = ['water_tank', 'sensor_moisture', 'sensor_temperature', 'sensor_npk', 'sensor_airquality', 'sensor_light']
+
+postVarList2 = ['led_switch', 'led_color', 'led_brightness', 'change']
+
+getVarList1 = ['led_switch', 'led_color', 'led_brightness', 'led_schedule', 'water_schedule', 'water_switch', 'water_input']
+
+getVarList2 = ['moisture_upper', 'moisture_lower', 'temperature_upper', 'temperature_lower',
+               'airquality_upper', 'airquality_lower', 'light_upper', 'light_lower']
+
+#print(gc.mem_free)
+print(variable_dict)
+
+#put and ask for change variable. if change==1, get certain new data because things have changed
+#get initially, but in loop, only get certain things if they've updated
+#after getting changed data, POST change=0
+'''
+for variable in variable_dict.keys():
+    variable_dict[variable] = sv.getData(ip, variable)
+    time.sleep(.4) #.4 is the limit
+'''
+#old_variable_dict = copy.deepcopy(variable_dict)
+old_led_switch = 0
+old_led_color = 0
+old_led_brightness = 0
+
+#after watering, set water switch/pump switch to 0
+#send updated data every 3 or 5 seconds
+
+#print(variable_dict)
+
+eco2, tvoc = 0, 0
+lightHeight = False
+
+pump_through_tube = .5
+
+notifStartTime = 0
+firstNotif = 0
+notifInterval = 300
+notifsCount = 0
+notifsMax = 5
+#notifs clear button
+#notifs count reset
+
 while True:
-    sentBytes = uart.write(bigB)
-    print('bytes sent: '+str(sentBytes))
-    print('################')
-    data = uart.read()
-    if data is not None:
-        print(bytearray(data))
-    else:
-        print('No data received')
-    time.sleep(1)
+    #GET SENSOR VALUES
+    soilMoist = int(i2cs.get_moisture())
+    ssTemp = int(i2cs.get_temp())
+    NPK = npk.get_npk()
+    waterLevel = int(us.get_water_level()) #int
+    lightHeight = int(us.get_plant_height()) #bool: True = bad, False = okay (probably)
+    eco2, tvoc = i2cs.get_eco2_tvoc() #can take 4 seconds
+    ambLight = int(i2cs.get_light())
+    print('GATHERED SENSOR DATA')
 
+    #update globalDict
+    variable_dict['sensor_moisture'] = soilMoist
+    variable_dict['sensor_temperature'] = ssTemp
+    variable_dict['sensor_npk'] = NPK
+    variable_dict['water_tank'] = waterLevel
+    variable_dict['sensor_light'] = ambLight
+    variable_dict['sensor_airquality'] = eco2
+
+    #SEND SENSOR DATA TO SERVER
+    for key in postVarList1:
+        sv.postData(ip, key, variable_dict[key])
+        time.sleep(.4) #.4 is the lower bound
+
+    #GET VALUES FROM SERVER (if anything has changed)
+    if sv.getData(ip, 'change'):
+        variable_dict['change'] = 1
+        for key in getVarList1:
+            variable_dict[key] = sv.getData(ip, key)
+            time.sleep(.4) #.4 is the limit
+
+    #LIGHT/WATER ACTIONS - Server
+    print('water switch')
+    print(variable_dict['water_switch'])
+    if variable_dict['change'] == 1:
+        if variable_dict['led_switch'] != old_led_switch:
+            lts.on_off_toggle()
+            old_led_switch = variable_dict['led_switch']
+        if variable_dict['led_color'] != old_led_color:
+            lts.color_change(variable_dict['led_color'])
+            old_led_color = variable_dict['led_color']
+        if variable_dict['led_brightness'] != old_led_brightness:
+            lts.brtness_change(variable_dict['led_brightness'])
+            old_led_brightness = variable_dict['led_brightness']
+        if variable_dict['water_switch'] == 1:
+            print('water_input')
+            print(variable_dict['water_input'])
+            pumps.pump_water(pump_through_tube + float(variable_dict['water_input'] / 30))
+            variable_dict['water_switch'] = 0
+            variable_dict['water_input'] = 0
+        #get rest of server data
+        for key in getVarList2:
+            variable_dict[key] = sv.getData(ip, key)
+            time.sleep(.4) #.4 is the limit
+        #CHANGE HAS BEEN TAKEN CARE OF
+        variable_dict['change'] = 0
+        sv.postData(ip, 'change', 0)
+
+    #LIGHT/WATER ACTIONS - Touchscreen (later)
+    '''
+    #don't do list, do individual to cut down time
+    for key in postVarList2:
+        sv.postData(ip, key, variable_dict[key])
+        time.sleep(.4) #.4 is the lower bound
+    '''
+
+    #SEND PLANT CONDITION NOTIFICATIONS
+    temp1 = soilMoist > variable_dict['moisture_upper']
+    temp2 = soilMoist < variable_dict['moisture_lower']
+    temp3 = ssTemp > variable_dict['temperature_upper']
+    temp4 = ssTemp < variable_dict['temperature_lower']
+    temp5 = NPK > variable_dict['npk_upper']
+    temp6 = NPK < variable_dict['npk_lower']
+    temp7 = eco2 > variable_dict['airquality_upper']
+    temp8 = eco2 < variable_dict['airquality_lower']
+    temp9 = ambLight > variable_dict['light_upper']
+    temp10 = ambLight < variable_dict['light_lower']
+
+    #if (soilMoist > variable_dict['moisture_upper']) or (soilMoist < variable_dict['moisture_lower']) or (ssTemp > variable_dict['temperature_upper']) or (ssTemp < variable_dict['temperature_lower']) or (NPK > variable_dict['ssTemp_upper']) or (NPK < variable_dict['ssTemp_lower']) or (eco2 > variable_dict['airquality_upper']) or (eco2 < variable_dict['airquality_lower']) or (ambLight > variable_dict['light_upper']) or (ambLight < variable_dict['light_lower']) or (lightHeight == True):
+    if temp1 or temp2 or temp3 or temp4 or temp5 or temp6 or temp7 or temp8 or temp9 or temp10 or lightHeight:
+        if (notifsCount < notifsMax):
+            if (firstNotif == 0):
+                notifStartTime = time.time()
+                firstNotif = 1
+                notifsCount += 1
+                print('sent notif')
+                #sv.sendNotification()
+            elif ((time.time() - notifStartTime) > notifInterval):
+                print('sent notif')
+                #sv.sendNotification()
+                notifsCount += 1
+
+    #update display
+    spid.overwrite_text(str(waterLevel), 2, 179, 60, 0xFF0000, index_water)
+    spid.overwrite_text(str(NPK), 2, 95, 80, 0xFF0000, index_NPK)
+    spid.overwrite_text(str(ssTemp), 2, 110, 100, 0xFF0000, index_temp)
+    spid.overwrite_text(str(soilMoist), 2, 215, 120, 0xFF0000, index_soilMoist)
+    spid.overwrite_text(str(ambLight), 2, 215, 140, 0xFF0000, index_ambLight)
+    #eco2
+    #tvoc (probably 0 tho)
+
+    print('LOOPED')
+    time.sleep(5) #delete later
 
 '''
-ip = sv.InitializeWifi('TheBeast', 'lolsquare')
-socket = sv.InitializeSocket(ip)
+#Global Variables
+led_switch = 0
+led_color = 0 # 0 = White 1 = Purple
+led_brightness = 0
+led_schedule = 0
 
-light_pwr_state = 0
-light_clr_state = 0 #both
+water_switch = 0
+water_input = 0
+water_tank = 0
+water_schedule = 0
 
+sensor_moisture = 0
+sensor_temperature = 0
+sensor_ssTemp = 0
+sensor_airquality = 0
+sensor_light = 0
 
-while True:
-    moisture = ss.get_moisture()
-    ss_temp = int(ss.get_temp())
-    #water_level = int(us.get_water_level())
-    #print('water: '+str(water_level))
-    print(str(moisture))
-    print(str(ss_temp))
-    sv.Gsensor_moisture = moisture
-    sv.Gsensor_temperature = ss_temp
-    if moisture > 400:
-        sv.sendNotification()
-    sv.Gsensor_temperature = ss_temp
-    print(sv.Gsensor_temperature)
-    sv.webserver(socket)
-    print('Gled_switch: '+str(sv.Gled_switch))
-    print('Gled_color: '+str(sv.Gled_color))
-    if sv.Gled_switch == 1 and light_pwr_state == 0:
-        lts.cycle_power()
-        light_pwr_state = 1
-    if sv.Gled_switch == 0 and light_pwr_state == 1:
-        lts.cycle_power()
-        light_pwr_state = 0
-    if light_pwr_state == 1:
-        if sv.Gled_color == 0: #white
-            if light_clr_state == 2: #my purple
-                lts.cycle_color()
-                lts.cycle_color()
-                light_clr_state = 1 #my white
-            elif light_clr_state == 0: #my both
-                lts.cycle_color()
-                light_clr_state = 1 #my white
-
-        if sv.Gled_color == 1: #purple
-            if light_clr_state == 0:
-                lts.cycle_color()
-                lts.cycle_color()
-                light_clr_state = 2
-            elif light_clr_state == 1:
-                lts.cycle_color()
-                light_clr_state = 2
-    print(str(light_clr_state))
-
-    pass
+ #Settings Values (Notifications)
+moisture_upper = 0
+moisture_lower = 0
+temperature_upper = 0
+temperature_lower = 0
+ssTemp_upper = 0
+ssTemp_lower = 0
+airquality_upper = 0
+airquality_lower = 0
+light_upper = 0
+light_lower = 0
 '''
+
 '''
 while True:
     #connect to web server
@@ -208,7 +261,6 @@ while True:
     #send post request when sensors update
     #look into interrupts but prob not
     pass
-'''
 
 #moisture = ss.get_moisture()
 #temp = ss.get_temp()
@@ -238,25 +290,10 @@ while True:
 
 #NOTE: IRQ as input raises an error when double pressing screen. Not sure why. So no interrupts for now
 
-'''
 while True:
     touch_coords = spid.touch_input()
     if touch_coords != None:
         if ((touch_coords['x'] >= 200) and (touch_coords['y'] <= 80)):
             print('start the watering sequence')
     time.sleep(1)
-'''
-
-
-
-
-'''
-while True:
-    gate.value = True #on True cycle, switches on or off
-    time.sleep(1) #should be set much shorter, but really doesn't matter. BJT can handle it
-    gate.value = False
-    time.sleep(1)
-    pass
-
-
 '''

@@ -1,0 +1,139 @@
+<!DOCTYPE HTML><html>
+    <head>
+    <title>Let It Grow App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="refresh" content="5">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <style>
+    html {
+     font-family: Cascadia Code;
+     display: inline-block;
+     margin: 0px auto;
+     text-align: center;
+    }
+    h1 { font-size: 3.0rem;
+    font-family: Arial;
+    
+    }
+    p { font-size: 3.0rem; }
+    .units { font-size: 1.5rem; }
+    .sensor-labels{
+      font-size: 1.5rem;
+      vertical-align:middle;
+      padding-bottom: 15px;
+    }
+    
+     a {//No Color Link
+      color: #FFFFFF;
+      text-decoration: inherit;
+    }
+    
+    .header {
+        padding: 20px;
+        text-align: center;
+        background: #1abc9c;
+        color: white;
+        font-size: 30px;
+        }
+    .button {
+        display: inline-block; background-color: #e7bd3b; border: none; 
+        border-radius: 4px; color: white; padding: 16px 40px; text-decoration: none;
+        font-size: 30px; margin: 2px; cursor: pointer;
+    }
+    .button2 {
+        background-color: #4286f4;
+    }
+    
+    meter{
+    
+        width: 300px;
+        height: 100px;
+        
+        -webkit-appearance: none; /* Reset appearance */
+        border: 1px solid #ccc;
+        border-radius: 3px;        
+        display: inline-block;
+    
+        transform:rotate(-90deg);
+        -ms-transform:rotate(-90deg); /* IE 9 */
+        -webkit-transform:rotate(-90deg); /* Opera, Chrome
+        
+    }
+    
+  
+    </style>
+    </head>
+    <body>
+    
+    <div class="header">
+       <h1>Let It Grow</h1>
+       <a href="water.html">
+          Back
+       </a>
+    </div>
+    
+    <h1> TANK LEVEL </h1>
+    <h1> Value: <span id="Tankdemo"></span> </h1>
+    <br></br>
+    <br></br>
+    <br></br>
+    <meter id="tanklevel" value="0" max="100">  </meter>
+    <br></br>
+    <br></br>
+    <br></br>
+    <h1> <span id="Tankfeedback">Loading...</span> </h1>
+    
+    </body>
+    
+    <script>
+    
+    //Send an HTML Request for values
+    function getInputValue(string)
+    {
+        var request = new XMLHttpRequest();
+        var value;
+        
+        request.open("GET", string);
+        request.setRequestHeader("Content-Type", string)
+        request.send(null);
+        
+        
+        request.onreadystatechange = function () {
+            if (request.readyState === 4 && request.status === 200) {
+                 
+                 var value = request.responseText
+                 TANKoutput = document.getElementById("Tankdemo");
+                 TANKlevel = document.getElementById("tanklevel");
+                 
+                 TANKoutput.innerHTML = value;
+                 TANKlevel.value = value; 
+                 
+                 TANKfeedback = document.getElementById("Tankfeedback");
+                 if(Number(value) > 50){
+                     TANKfeedback.innerHTML = "Looks Good!";
+                 }
+                 else if(Number(value) > 25){
+                     TANKfeedback.innerHTML = "Tank is Low"
+                 }
+                 else if(Number(value) > 0){
+                     TANKfeedback.innerHTML = "Refill Needed Soon"
+                 }
+                 else{
+                     TANKfeedback.innerHTML = "TANK EMPTY! PLEASE REFILL!"
+                 }
+                 
+                
+            }
+          }
+        
+    }
+    
+    getInputValue("/water_tank")
+        
+    </script>
+    
+    
+    
+    </html>
+
+

@@ -16,7 +16,7 @@ brtness = digitalio.DigitalInOut(board.IO21)
 brtness.direction = digitalio.Direction.OUTPUT
 brtness.value = False
 
-delay = .1 #.1 is limit
+delay = .1
 oldColor = 0
 oldBrightness = 0
 

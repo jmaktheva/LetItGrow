@@ -1,0 +1,166 @@
+<!DOCTYPE HTML><html>
+    <head>
+    <title>LIGHT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <style>
+    html {
+     font-family: Cascadia Code;
+     display: inline-block;
+     margin: 0px auto;
+     text-align: center;
+    }
+    h1 { font-size: 3.0rem; }
+    p { font-size: 3.0rem; }
+    
+    a {//No Color Link
+      color: #FFFFFF;
+      text-decoration: inherit;
+    }
+    
+    .header {
+        padding: 20px;
+        text-align: center;
+        background: #1abc9c;
+        color: white;
+        font-size: 30px;
+        }
+    .units { font-size: 1.5rem; }
+    .sensor-labels{
+      font-size: 1.5rem;
+      vertical-align:middle;
+      padding-bottom: 15px;
+    }
+    .button {
+        font-family: Impact;
+        display: inline-block; background-color: #e7bd3b; border: none; 
+        border-radius: 20px; color: white; padding: 50px 100px; text-decoration: none;
+        font-size: 50px; margin: 2px; cursor: pointer;
+    }
+    .button2 {
+        background-color: #4286f4;
+    }
+    
+    </style>
+    </head>
+    <body>
+    
+     <div class="header">
+       <h1>Let It Grow</h1>
+       <a href="light.html">
+          Back
+       </a>
+    </div>
+    
+    <h1>Brightness</h1>
+    <p>
+    <img id =light src="brightness0%.png" width="450" height="350" alt="Lightbulb">
+    </p>
+    
+
+    <p>
+    <button class="button" onclick="Change1()"> + </button></a>
+    </p>
+
+    <p>
+    <button  class="button button2" onclick="Change2()"> - </button></a>
+    </p>
+    
+    
+    <script>
+    var temp = 0;
+    
+    function checkVar(){
+        
+        if(temp == 0){
+            document.getElementById("light").src = "brightness0%.png"
+        }
+        else if(temp == 25){
+            document.getElementById("light").src = "brightness25%.png"
+        }
+        else if(temp == 50){
+            document.getElementById("light").src = "brightness50%.png"
+        }
+        else if(temp == 75){
+            document.getElementById("light").src = "brightness75%.png"
+        }
+        else if(temp == 100){
+            document.getElementById("light").src = "brightness100%.png"
+        }
+        
+    }
+    
+    function Change1(){
+        temp = (temp + 25);
+        if(temp > 100)
+        {
+           temp = 100;
+        }
+        sendInputValue();
+    }
+    
+    function Change2(){
+        temp = (temp - 25);
+        if(temp < 0){
+         temp = 0; 
+        }
+        sendInputValue();
+    }
+    
+    function getInputValue(string)
+    {
+        var request = new XMLHttpRequest();
+        var value;
+        
+        request.open("GET", string);
+        request.setRequestHeader("Content-Type", string)
+        request.send(null);
+        
+        
+        request.onreadystatechange = function () {
+            if (request.readyState === 4 && request.status === 200) {
+                 
+                 var value = request.responseText
+                 temp = Number(value);
+                 checkVar();
+                                 
+            }
+          }
+        
+    }
+    
+    function sendInputValue() {
+        
+        // create XMLHttpRequest object
+        const request = new XMLHttpRequest()
+        
+        // open a POST request
+        request.open("POST", "data")
+        
+        // set content-type header to JSON
+        request.setRequestHeader("Content-Type", "led_brightness")
+        
+        // send JSON data to the remote server
+        request.send(temp)
+        
+        //Server Sends Back Feedback 
+        request.onreadystatechange = function () {
+  
+            if (request.readyState === 4 && request.status === 200) {
+                 
+                 alert("LED REQUEST SENT");
+                 getInputValue("/led_brightness");
+                
+            }
+          }
+            
+       
+    }
+    
+    getInputValue("/led_brightness");
+    </script>
+    
+    
+    
+    </body>
+    </html>

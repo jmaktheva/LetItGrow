@@ -1,0 +1,181 @@
+<!DOCTYPE HTML><html>
+    <head>
+    <title>WATER</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    
+    <style>
+    html {
+     font-family: Cascadia Code;
+     display: inline-block;
+     margin: 0px auto;
+     text-align: center;
+    }
+    h1 { font-size: 3.0rem; }
+    p { font-size: 3.0rem; }
+    .units { font-size: 1.5rem; }
+    .sensor-labels{
+      font-size: 1.5rem;
+      vertical-align:middle;
+      padding-bottom: 15px;
+    }
+    
+    a { //No Color Link
+      color: #FFFFFF;
+      text-decoration: inherit;
+    }
+    
+    .header {
+        padding: 20px;
+        text-align: center;
+        background: #1abc9c;
+        color: white;
+        font-size: 30px;
+        }
+    
+    .button {
+        display: inline-block; background-color: blue; border: none; 
+        border-radius: 4px; color: white; padding: 16px 40px; text-decoration: none;
+        font-size: 30px; margin: 2px; cursor: pointer;
+    }
+    
+        .slider {
+        -webkit-appearance: none;
+        width: 50%;
+        height: 15px;
+        border-radius: 30px;  
+        background: #d3d3d3;
+        outline: none;
+        opacity: 0.7;
+        -webkit-transition: .2s;
+        transition: opacity .2s;
+        }
+
+        .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%; 
+        background: #04AA6D;
+        cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+        width: 45px;
+        height: 50px;
+        border-radius: 20%;
+        background: url('water.svg');
+        cursor: pointer;
+        }
+    </style>
+    </head>
+    
+    <body>
+    
+     <div class="header">
+       <h1>Let It Grow</h1>
+       <a href="water.html">
+          Back
+       </a>
+    </div>
+    
+    <p>
+    <span>Current Water State: <span id="/sensor_moisture"></span> </span>
+    </p>
+    
+    <img src="water.svg" width="250" height="250" alt="WaterGlass ">
+    
+    
+    <p>
+        <button class="button" onclick="sendInputValue()" id="waterbutton";>Water ON</button>
+    </p>
+    
+    <p>Value: <span id="demo">0</span></p>
+    
+    <div class="slidecontainer">
+      <input type="range" min="1" max="100" value="0" id="myRange" class="slider">
+    </div>
+    
+    <script>
+    function red(elem){elem.style.backgroundColor = 'red';}
+    function blue(elem){elem.style.backgroundColor = 'blue';}
+    
+    function getInputValue(string)
+    {
+        var request = new XMLHttpRequest();
+        var value;
+        
+        request.open("GET", string);
+        request.setRequestHeader("Content-Type", string)
+        request.send(null);
+        
+        
+        request.onreadystatechange = function () {
+            if (request.readyState === 4 && request.status === 200) {
+                 
+                 var value = request.responseText
+                     
+                 output = document.getElementById(string);
+                 output.innerHTML = value + "% Moisture";
+                
+            }
+          }
+        
+    }
+    
+   
+    
+    function sendInputValue() {
+        
+        //Button Press Visual Feedback
+        const elem = document.getElementsByClassName('button')[0]
+        let myTimeout = setTimeout(red,500,elem);
+        myTimeout = setTimeout(blue,1000,elem);
+        
+        // create XMLHttpRequest object
+        const request = new XMLHttpRequest()
+        
+        // open a POST request
+        request.open("POST", "data")
+        
+        // set content-type header to JSON
+        request.setRequestHeader("Content-Type", "water_input")
+        
+        // send JSON data to the remote server
+        request.send(slider.value)
+        
+        //Server Sends Back Feedback 
+        request.onreadystatechange = function () {
+  
+            if (request.readyState === 4 && request.status === 200) {
+                 
+                 alert("Pump Activation Successful");
+                 getInputValue("/sensor_moisture");
+                
+            }
+          }
+            
+        
+       
+    }
+        var slider = document.getElementById("myRange");
+        var outslide = document.getElementById("demo");
+        
+        outslide.innerHTML = slider.value + "mL";
+
+        slider.oninput = function() {
+          outslide.innerHTML = this.value + "mL";
+        }
+        
+        getInputValue("/sensor_moisture");
+        
+        
+        
+    </script>
+       
+    </body>
+    </html>
+    
+    
+

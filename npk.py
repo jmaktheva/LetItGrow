@@ -1,0 +1,21 @@
+import analogio
+import board
+
+#Value from 0 - 65535
+
+adc1 = analogio.AnalogIn(board.IO1)
+adc2 = analogio.AnalogIn(board.IO2)
+
+def get_npk():
+    val1 = adc1.value
+    val2 = adc2.value
+    val = abs(val1 - val2)
+    #if(val < 0):
+    #    val = 0
+    return int(val*.05)
+
+'''
+    print(val)
+    print(val*0.05) #Step of 60
+    time.sleep(1)
+'''

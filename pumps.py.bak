@@ -8,7 +8,6 @@ gate.direction = digitalio.Direction.OUTPUT
 gate.value = False
 
 def pump_water(seconds):
-    print('pumping water for '+str(seconds)+' seconds')
     gate.value = True #turn pump on
     print('on')
     time.sleep(seconds)

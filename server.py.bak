@@ -127,7 +127,7 @@ def getData(ip,content):
     #print('header: '+str(header))
     if (header):
         value = header.split("\r\n\r\n",2)[1].strip('\r\n')
-        #print(value)
+        print(value)
         socket.close()
         return int(value)
     
