@@ -1,7 +1,5 @@
-'''
+''
 plant_height = 4
-
-
 if water<20:
     spid.draw_circle(15, 145, 8, 0xFF0000)
     spid.draw_text('Tank water too low!', 2, 35, 145, 0xFF0000)
@@ -17,7 +15,6 @@ if plant_height<3:
 if soilMoist<20:
     spid.draw_circle(15, 225, 8, 0xFF0000)
     spid.draw_text('Plant may need watered!', 2, 35, 225, 0xFF0000)
-
 '''
 
 
@@ -35,29 +32,31 @@ import npk
 
 lts.power_on()
 
+labelColor = 0xFF0000
+valueColor = 0xFF0000
+
 spid.draw_background(0x00FF00)
 spid.draw_text('Let It Grow', 3, 30, 20, 0xD80621)
 
 waterLevel = 0
-spid.draw_text('Tank level:   ' + '%', 2, 35, 60, 0xFF0000)
-index_water = spid.draw_text(str(waterLevel), 2, 179, 60, 0xFF0000)
+spid.draw_text('Tank level:', 2, 35, 60, labelColor)
+index_water = spid.draw_text('{}%'.format(waterLevel), 2, 179, 60, valueColor)
 
 NPK = 0
-spid.draw_text('NPK: ', 2, 35, 80, 0xFF0000)
-index_NPK = spid.draw_text(str(NPK), 2, 95, 80, 0xFF0000)
+spid.draw_text('NPK:', 2, 35, 80, labelColor)
+index_npk = spid.draw_text('{}%'.format(NPK), 2, 95, 80, valueColor)
 
 ssTemp = 0
-spid.draw_text('Temp:   ' + ' ' + 'F', 2, 35, 100, 0xFF0000)
-index_temp = spid.draw_text(str(ssTemp), 2, 110, 100, 0xFF0000)
+spid.draw_text('Temp:', 2, 35, 100, labelColor)
+index_temp = spid.draw_text('{} F'.format(ssTemp), 2, 110, 100, valueColor)
 
 soilMoist = 0
-spid.draw_text('Soil moisture:   '+'%', 2, 35, 120, 0xFF0000)
-index_soilMoist = spid.draw_text(str(soilMoist), 2, 215, 120, 0xFF0000)
+spid.draw_text('Soil moisture:', 2, 35, 120, labelColor)
+index_soilMoist = spid.draw_text('{}%'.format(soilMoist), 2, 215, 120, valueColor)
 
 ambLight = 0
-spid.draw_text('Ambient light:   '+'%', 2, 35, 140, 0xFF0000)
-index_ambLight = spid.draw_text(str(ambLight), 2, 215, 140, 0xFF0000)
-
+spid.draw_text('Ambient light:', 2, 35, 140, labelColor)
+index_ambLight = spid.draw_text('{}%'.format(ambLight), 2, 215, 140, valueColor)
 
 
 ip = '172.20.10.6'
@@ -212,11 +211,11 @@ while True:
                 notifsCount += 1
 
     #update display
-    spid.overwrite_text(str(waterLevel), 2, 179, 60, 0xFF0000, index_water)
-    spid.overwrite_text(str(NPK), 2, 95, 80, 0xFF0000, index_NPK)
-    spid.overwrite_text(str(ssTemp), 2, 110, 100, 0xFF0000, index_temp)
-    spid.overwrite_text(str(soilMoist), 2, 215, 120, 0xFF0000, index_soilMoist)
-    spid.overwrite_text(str(ambLight), 2, 215, 140, 0xFF0000, index_ambLight)
+    spid.overwrite_text('{}%'.format(waterLevel), index_water)
+    spid.overwrite_text('{}%'.format(NPK), index_npk)
+    spid.overwrite_text('{} F'.format(ssTemp), index_temp)
+    spid.overwrite_text('{}%'.format(soilMoist), index_soilMoist)
+    spid.overwrite_text('{}%'.format(ambLight), index_ambLight)
     #eco2
     #tvoc (probably 0 tho)
 
@@ -229,18 +228,15 @@ led_switch = 0
 led_color = 0 # 0 = White 1 = Purple
 led_brightness = 0
 led_schedule = 0
-
 water_switch = 0
 water_input = 0
 water_tank = 0
 water_schedule = 0
-
 sensor_moisture = 0
 sensor_temperature = 0
 sensor_ssTemp = 0
 sensor_airquality = 0
 sensor_light = 0
-
  #Settings Values (Notifications)
 moisture_upper = 0
 moisture_lower = 0
@@ -261,35 +257,25 @@ while True:
     #send post request when sensors update
     #look into interrupts but prob not
     pass
-
 #moisture = ss.get_moisture()
 #temp = ss.get_temp()
 #print(str(moisture)+', '+str(temp))
-
-
 #import Ultrasonic as us
 #plant_height = us.get_plant_height()
 #water_level = us.get_water_level()
 #print(plant_height)
 #print(water_level)
-
-
 #print(spid.touch_input())
 #time.sleep(1)
-
 #spid.draw_button(240, 210, 80, 30, 'Water Plant')
 #spid.draw_button(240, 0, 80, 30, 'Light Power')
 #spid.draw_button(240, 30, 80, 30, 'Color Adj')
 #spid.draw_button(240, 60, 80, 30, 'Brtness Adj')
-
 #import alarm
-
 #pin_alarm = alarm.pin.PinAlarm(pin=board.IO6, value=False)
 #alarm.light_sleep_until_alarms(pin_alarm)
 #print('got here')
-
 #NOTE: IRQ as input raises an error when double pressing screen. Not sure why. So no interrupts for now
-
 while True:
     touch_coords = spid.touch_input()
     if touch_coords != None:
